@@ -1,125 +1,157 @@
 #!/usr/bin/env python
 
-# pmterm.py
+# pmterm_2_1.py
 
 '''
-tex-terminal front-end for a Password Manager Program
+tex-terminal front-end for Password Manager Program
 '''
 
-####################################################
-prg_tittle = ''' Password Manager -terminal- v1.5'''
-####################################################
+#####################################################
+prg_tittle = ''' Password Manager -terminal- v 2.1'''
+#####################################################
 # author: Jorge Monti
 
-import getpass as gp                # Built-in Lib
-from tabulate import tabulate       # External Lib
-import pmcore as pmc                # Own module
+
+# Built-in Libs
+import getpass as gp
+import logging
+import sys
+
+# Third-party Lib
+from tabulate import tabulate  
+
+# Own module
+import pmcore_2_1 as pmc
 
 
 ### Functions
 def input_scrt(txt):
     while True:
-        # scrt1 = gp.getpass(f'Input {txt}: ')
-        # scrt2 = gp.getpass(f'Re-enter {txt}: ')
-        scrt1 = input(f'Input {txt}: ')
-        scrt2 = input(f'Re-enter {txt}: ')
+        scrt1 = gp.getpass(f'Input {txt}: ')
+        scrt2 = gp.getpass(f'Re-enter {txt}: ')
         if scrt1 == scrt2:
             break
         else:
-            print(f'{txt}s do not match!, try again...')
+            log.warning(f'{txt}s do not match!, try again...')
     return scrt1
     
 def input_val(val):
     res = input(f'Input {val}: ')
     return res
 
-def chg_val(srv, val, mthd, succ=''):
+def chg_val(src, val, mthd, succ=''):
     try:
-        mthd(srv, val)
+        mthd(src, val)
         print(succ)
     except Exception as e:
-        print(f'Error: {e}')
+        log.error(e)
 
     
 ### main
 print(f' ~~~~ {prg_tittle} ~~~~')
-passphrase = input_scrt('Passphrase')
-pmc1 = pmc.PmTable(passphrase)
-s, u, p, n, dt = pmc1.get_cols()
+
+# Config logging for warning and error messages
+logging.basicConfig(format="[%(levelname)s] %(message)s")
+log = logging.getLogger(__name__)
+
+# If not passed as cli arg[1], ask user the passphrase, to get the password table and PmTable attributes.
+try:
+    passphrase = sys.argv[1]
+except IndexError:
+    passphrase = input_scrt('Passphrase')
+except Exception as e:
+    sys.exit(f'CRITICAL ERROR: {e}')
+
+pmt = pmc.PmTable(passphrase)
+s, u, p, r, d, n, np, nd = pmt.get_cols()
 
 # Menu
 while True:
     print()
-    for k, v in pmc1.mthds.items():
+    for k, v in pmt.mthds.items():
         print(f'{k}) {v[0]}')
     
-    option = input('Select an option [0 to quit program]: ')
+    option = input('Select an option [0 to quit program]: ').upper()
 
     
-    if option == '1':                   # add_pwd
-        srv = input_val(s)
+    if option == '1':                   # '1': ('Add Password', self.add_pwd)
+        src = input_val(s)
         usr = input_val(u)
         pwd = input_scrt(p)
+        url = input_val(r)
         nts = input_val(n)
-        try:
-            pmc1.add_pwd(srv, usr, pwd, nts)
-            print('Password Successfully Added!')
-        except Exception as e:
-            print(f'Error! {e}')
-    
-    elif option == '2':                 # get_pwd
-        srv = input_val(s)
-        print(pmc1.get_pwd(srv)[1])
+        nxt_pwd = input_scrt(np)
 
-    elif option == '3':                 # chg_pwd
-        srv = input_val(s)
-        n_pwd = input_scrt(p)
-        chg_val(srv, n_pwd, pmc1.chg_pwd, 'Password Successfully Changed!')
-
-    elif option == '4':                 # updt_nts
-        srv = input_val(s)
-        n_nt = input_val(n)
-        chg_val(srv, n_nt, pmc1.updt_nts, 'Notes Successfully Updated!')
-
-    elif option == '5':                 # srv_srch
-        part_s = input(f'Input the name of the service or part of the name: ')
-        print(tabulate(pmc1.srv_srch(part_s), headers='keys', tablefmt='psql'))
-
-    elif option == '6':                 # del_srv
-        srv = input_val(s)
-        if pmc1.chk_srv(srv):
-            pmc1.del_srv(srv)
-            print(f'{srv} DELETED - No turning back')
+        if src and usr and pwd:
+            try:
+                pmt.add_pwd(src, usr, pwd, url, nts, nxt_pwd)
+                print('Password Successfully Added!')
+            except Exception as e:
+                log.error(e)
         else:
-            print(f'Error: {s} "{srv}" do not exists!')
-
-    elif option == '7':                 # get_tbl
-        #print(pmc1.get_tbl())
-        print(tabulate(pmc1.get_tbl(), headers='keys', tablefmt='psql'))
+            log.warning(f'''Please fill {s}, {u}, and {p} fields. {r}, {n} and {np} are optional.''')
     
-    elif option == '8':                 # get_usr
-        srv = input_val(s)
-        print(pmc1.get_usr(srv))
+    elif option == '2':                 # '2': ('Get Password', self.get_pwd)
+        src = input_val(s)
+        print(pmt.get_pwd(src)[1])
+        
+    elif option == '3':                 # '3': ('Get Table', self.get_tbl)
+        #print(pmt.get_tbl())
+        print(tabulate(pmt.get_tbl(), headers='keys', tablefmt='psql'))
 
-    elif option == '9':                 # get_t_by_srv
-        #print(pmc1.tbl_b_srv())
-        print(tabulate(pmc1.tbl_b_srv(), headers='keys', tablefmt='psql'))
-    
-    elif option == '10':                # '10': ('Tbl Ignoring Case', self.tbl_icase),
-        #print(pmc1.tbl_icase())
-        print(tabulate(pmc1.tbl_icase(), headers='keys', tablefmt='psql'))
+    elif option == '4':                 # '4': ('Get User', self.get_usr)
+        src = input_val(s)
+        print(pmt.get_usr(src))
 
-    elif option == '11':                # '11': ('Full Monti', self.f_monti)
+    elif option == '5':                 # '5': ('Change Password', self.chg_pwd)
+        src = input_val(s)
+        n_pwd = input_scrt(p)
+        chg_val(src, n_pwd, pmt.chg_pwd, 'Password Successfully Changed!')
+
+    elif option == '6':                 # '6': ('Change URL', self.chg_url),
+        src = input_val(s)
+        n_url = input_scrt(r)
+        chg_val(src, n_url, pmt.chg_url, 'URL Successfully Changed!')
+
+    elif option == '7':                 # '7': ('Update Notes', self.updt_nts)
+        src = input_val(s)
+        n_nt = input_val(n)
+        chg_val(src, n_nt, pmt.updt_nts, 'Notes Successfully Updated!')
+
+    elif option == '8':                 # '8': ('Set Next Pwd', self.set_nxt_pwd)
+        src = input_val(s)
+        nxt_pwd = input_scrt(np)
+        chg_val(src, nxt_pwd, pmt.set_nxt_pwd, 'Next Password Successfully Load!')
+
+    elif option == '9':                 #  '9': ('Service Search', self.src_srch)
+        part_s = input(f'Input the name of the service or part of the name: ')
+        print(tabulate(pmt.src_srch(part_s), headers='keys', tablefmt='psql'))
+
+    elif option == 'A':                 # 'A': ('Delete Service', self.del_src)
+        src = input_val(s)
+        if pmt.chk_src(src):
+            pmt.del_src(src)
+            print(f'{src} DELETED - No turning back')
+        else:
+            log.warning(f'Error: {s} "{src}" do not exists!')
+
+    elif option == 'B':                 # 'B': ('Table by Service', self.tbl_b_src)
+        print(tabulate(pmt.tbl_b_src(), headers='keys', tablefmt='psql'))
+
+    elif option == 'C':                 # 'C': ('Tbl Ignoring Case', self.tbl_icase)
+        print(tabulate(pmt.tbl_icase(), headers='keys', tablefmt='psql'))   
+
+    elif option == 'D':                # 'D': ('Full Monti', self.f_monti)
         pph3 = gp.getpass('Please enter Passphrase: ')   
         if pph3 == passphrase:
-            print(pmc1.f_monti())
+            print(pmt.f_monti())
         else:
-            print('Acces Denied!')
+            log.error('Access Denied!')
 
     elif option == '0':
-        quit()
+        sys.exit(f'{prg_tittle} closed by user - Option: {option}')
 
     else:
-        print(f'Not a valid option: {option}: ')
+        log.warning(f'Not a valid option: {option}: ')
     
 

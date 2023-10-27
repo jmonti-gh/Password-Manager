@@ -16,17 +16,40 @@ different services on the Web or intranet.
 - Delete them and they will be created from scratch with a new passphrase when the PmTable() class is intantiated.
 - cipe.csd and nert are files default names. Renames can be done using the cfn=, and kfn= parameters of the PmTable() class.
 
+## pmcore.py classes
+### class pmcore.PmTable(pph=None, cfn='cipe.csd', kfn='nert')
+#### Parameters - Attributes - Methods
+        self.mthds = {
+            '1': ('Add Password', self.add_pwd), '2': ('Get Password', self.get_pwd),
+            '3': ('Get Table', self.get_tbl), '4': ('Get User', self.get_usr),
+            '5': ('Change Password', self.chg_pwd), '6': ('Change URL', self.chg_url),
+            '7': ('Update Notes', self.updt_nts), '8': ('Set Next Pwd', self.set_nxt_pwd),
+            '9': ('Service Search', self.src_srch), 'A': ('Delete Service', self.del_src),
+            'B': ('Table by Service', self.tbl_b_src), 'C': ('Tbl Ignoring Case', self.tbl_icase),
+            'D': ('Full Monti', self.f_monti)
+            }
+
+		self.__df
+
 ## Fundamentals - Pandas
-All data is stored in a Pandas Dataframe consisting of five columns and one row for each service that is loaded. The columns and 
-their order are Service, Username, Password, Notes, and date_time. Password data is stored encrypted, the rest in plain text. 
+All data is stored in a Pandas Dataframe consisting of eigth columns and, for each service that is loaded, one new row. The columns and 
+their order are:    
+1. Service: Service name. Must be unique. (str)
+2. Username:
+3. Password:
+4. URL: (could be app launcher)
+5. dt_pwd: Datetime password was load or chenged.
+6. Notes:
+7. next_pwd: Potential password to change nex password change in the service.
+8. dt_next_pwd: Datatime next_pwd was loaded or chenged (setted).
 The dataframe is saved in an encrypted file.    
 pmcore.py takes care of all the tasks of encryption, decryption, and administration of the dataframe. The UI components do not 
-require the use of either encryption or decryption or Pandas at all.
+require the use of either encryption nor decryption nor Pandas at all.
 
 ## Example Data:
 - Passphrase: ¡Argentina Campeón del Mundo 2022! - Tres campeonatos mundiales: 1978(Kempes), 1986('El Diego'), 2022(Messi).
-- Dataframe (columnns= ['Service', 'Username', 'Password', 'Notes', 'date_time']).
-	- row_0: first row, initial file data
+- Dataframe rows
+	- row_0: first row, initial file data		# row_0 is created at the same moment of table creation.
 	- row_1: realpython.com, jperez.pwdmgr@gmail.com, At_least_8_chars
 	- row_2: reedit.com, jperez_pwdmgr, The_2nd_Pwd, dlthub.com
 
