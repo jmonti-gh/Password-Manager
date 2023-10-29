@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-# pmterm_2_1.py
+# pmterm.py
 
 '''
 tex-terminal front-end for Password Manager Program
 '''
 
 #####################################################
-prg_tittle = ''' Password Manager -terminal- v 2.1'''
+prg_tittle = ''' Password Manager -terminal- v 2.2'''
 #####################################################
 # author: Jorge Monti
 
@@ -21,7 +21,7 @@ import sys
 from tabulate import tabulate  
 
 # Own module
-import pmcore_2_1 as pmc
+import pmcore as pmc
 
 
 ### Functions
@@ -68,12 +68,13 @@ s, u, p, r, d, n, np, nd = pmt.get_cols()
 # Menu
 while True:
     print()
+    c = 1
     for k, v in pmt.mthds.items():
-        print(f'{k}) {v[0]}')
-    
-    option = input('Select an option [0 to quit program]: ').upper()
+        print(f'{k:}) {v[0]:<20}', end='')
+        if not c % 4: print()
+        c += 1
+    option = input('\n--> Select an option [0 to quit program]: ').upper()
 
-    
     if option == '1':                   # '1': ('Add Password', self.add_pwd)
         src = input_val(s)
         usr = input_val(u)
@@ -93,10 +94,13 @@ while True:
     
     elif option == '2':                 # '2': ('Get Password', self.get_pwd)
         src = input_val(s)
-        print(pmt.get_pwd(src)[1])
-        
+        try:
+            pwd, nxt_pwd = pmt.get_pwd(src)
+            print(pwd, '\n', nxt_pwd)
+        except pmc.ServiceNotFoundError as e:
+            log.error(e)
+
     elif option == '3':                 # '3': ('Get Table', self.get_tbl)
-        #print(pmt.get_tbl())
         print(tabulate(pmt.get_tbl(), headers='keys', tablefmt='psql'))
 
     elif option == '4':                 # '4': ('Get User', self.get_usr)
@@ -148,8 +152,16 @@ while True:
         else:
             log.error('Access Denied!')
 
+    elif option == 'E':                 # 'E': ('Get URL', self.get_url)
+        src = input_val(s)
+        print(pmt.get_url(src))
+
+    elif option == 'SECRET':             # Show HIDES in all row
+        src = input_val(s)
+        print(tabulate(pmt._PmTable__get_naked_row(src), headers='keys'))
+
     elif option == '0':
-        sys.exit(f'{prg_tittle} closed by user - Option: {option}')
+        sys.exit(f'{prg_tittle}, closed by user - Option: {option}')
 
     else:
         log.warning(f'Not a valid option: {option}: ')

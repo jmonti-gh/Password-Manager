@@ -1,6 +1,6 @@
 # !... pyw.exe pmtk.pyw
 
-# pmtk_2_1.pyw
+# pmtk.pyw
 
 '''
 GUI Password Manager
@@ -8,7 +8,7 @@ GUI Password Manager
 
 
 #######################################################
-prg_tittle = ''' Password Manager -tkinter- v. 2.1''' 
+prg_tittle = ''' Password Manager -tkinter- v. 2.2''' 
 #######################################################
 # author: Jorge Monti
 
@@ -24,7 +24,7 @@ from ctypes import windll
 from pandastable import Table
 
 # Own module
-import pmcore_2_1 as pmc
+import pmcore as pmc
 
 
 ### Universal Vars'
@@ -75,6 +75,7 @@ class PwdMgr(tk.Tk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         self.pph_widgets()
+        self.bind("<Control-m>", lambda event: self.__ctrl_m())     # Secret keystroke
 
     def pph_widgets(self):
         r, c, px, py = 0, 0, 10, 5
@@ -192,7 +193,7 @@ Please fill {self.sl}, {self.ul}, and {self.pl} fields.
     def get_pwd(self):              # '2': ('Get Password', self.get_pwd)
         src = self.src_entry.get()
         try:
-            usr, pwd, nxt_pwd = self.pmt.get_pwd(src)
+            pwd, nxt_pwd = self.pmt.get_pwd(src)
             msb.showinfo(self.pl, f'{pwd}\n{nxt_pwd}')
         except Exception as e:
             msb.showwarning('ERROR', f"Can't get password for Service '{src}'\n{e}")
@@ -304,6 +305,13 @@ Please fill {self.sl}, {self.ul}, and {self.pl} fields.
 
     def hlp(self):                      # cmd[14]
         msb.showinfo(f'{prg_tittle}  - Help', help)
+
+    def __ctrl_m(self):                 # Secret
+        pph4 = self.pph_entry.get()
+        self.pph_entry.delete(0, tk.END)
+        src = self.src_entry.get()
+        if pph4 == self.__pph and src:
+            ShowDF(self.pmt._PmTable__get_naked_row(src))
 
     def __ext_prg(self, msg):
         msb.showerror('CRITICAL ERROR', msg)

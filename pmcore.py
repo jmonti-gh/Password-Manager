@@ -7,7 +7,7 @@ In turn, passwords are saved with their own encryption.
 I see practical import it under the pmc alias, ex.: import pmcore as pmc'''
 
 __author__ = 'Jorge Monti'
-__version__ = 2.1
+__version__ = 2.2
 
 
 # Built-in Libraries
@@ -41,27 +41,13 @@ class PmTable():
     ''' Core class: It hosts a dataframe that is written as an encrypted file
     each time it is modified'''
     def __init__(self, pph, cfn=cipe, kfn=kife):
+        self.kfn = kfn
         self.__pph = pph        
         self.cfn = cfn
-        self.kfn = kfn
         self.s, self.u, self.p, self.r = 'Service', 'Username', 'Password', 'URL'
         self.d, self.n, self.np, self.nd = 'dt_pwd', 'Notes', 'next_pwd', 'dt_next_pwd'
         self.cols = [self.s, self.u, self.p, self.r, self.d, self.n, self.np, self.nd]
         self.M = dtm.datetime(1970,1,2)     # for empty dt_next_pwd entries (near ux_epoch == 0)
-
-        # if cipe do not exist initialize it, else read-it + check cols names
-        if not self.chk_file(self.cfn):
-            self.wrt_cipe(self.__init_df())
-        self.__df = self.read_table()        # get df from cipe (implicit checking of pph)
-        # Check cols read vs the defined ones
-        if len([i for i, j in zip(self.cols, self.__df.columns) if i == j]) != len(self.cols):
-            raise CsdColumnsNotMatch
-
-        # if kife do not exist initialize it, else read it.
-        if not self.chk_file(self.kfn):
-            self.__wrt_kipe()
-        self.__key = self.__read_key()         # get key from kife file
-
         self.mthds = {
             '1': ('Add Password', self.add_pwd), '2': ('Get Password', self.get_pwd),
             '3': ('Get Table', self.get_tbl), '4': ('Get User', self.get_usr),
@@ -69,10 +55,23 @@ class PmTable():
             '7': ('Update Notes', self.updt_nts), '8': ('Set Next Pwd', self.set_nxt_pwd),
             '9': ('Service Search', self.src_srch), 'A': ('Delete Service', self.del_src),
             'B': ('Table by Service', self.tbl_b_src), 'C': ('Tbl Ignoring Case', self.tbl_icase),
-            'D': ('Full Monti', self.f_monti)
+            'D': ('Full Monti', self.f_monti), 'E': ('Get URL', self.get_url)
             }
+
+        # if cipe do not exist initialize it, else read-it plus check cols names
+        if not self.chk_file(self.cfn):
+            self.wrt_cipe(self.__init_df())
+        self.__df = self.read_table()       # get df from cipe (implicit checking of pph)
+        # Check cols read vs the defined ones (comparing two lists)
+        if len([i for i, j in zip(self.cols, self.__df.columns) if i == j]) != len(self.cols):
+            raise CsdColumnsNotMatch
+        
+        # if kipe (key) don't exist create it (write it), else read-it
+        if not self.chk_file(self.kfn):
+            self.__wrt_kipe()
+        self.__key = self.__read_key()      # get key from kife file
     
-    def __shw_only(func):           # to hide some columns in table views (decorator)
+    def __shw_only(func):                   # to hide some columns in table views (decorator)
         def inner(self, *args):
             return func(self, *args).drop([self.p, self.u, self.np], axis=1)
         return inner
@@ -88,19 +87,20 @@ class PmTable():
 
     def __init_df(self) -> pd.DataFrame:
         row_0 = [['!csd', 'usr', 'pwd', 'https://...', dtm.datetime.now(),
-                  'row_0 (dt: date_time)', 'np', self.M]]
+                  'row_0 (dt: date_time)', 'nxt_pwd', self.M]]
         return pd.DataFrame(row_0, columns=self.cols)
+        # pwd and nxt_pwd aren't crypted (to see in future versions)
 
     def read_table(self) -> pd.DataFrame:
         return crp.read_encrypted(path=self.cfn, password=self.__pph)
     
     def __wrt_kipe(self) -> None:
         '''Write Fernet.key to file'''
-        k = Fernet.generate_key()
+        k = Crypts.gen_key()
         with open(self.kfn, 'wb') as f:
             f.write(k)
 
-    def __read_key(self) -> str.encode:
+    def __read_key(self) -> bytes:
         with open(self.kfn, 'rb') as f:
             return f.read()
 
@@ -134,17 +134,9 @@ class PmTable():
             self.wrt_cipe(self.__df)
 
     ## '2': ('Get Password', 'get_pwd')
-    def get_pwd(self, src: str) -> tuple() or ServiceNotFoundError:
-        if self.chk_src(src):
-            gp_row = self.__df.loc[self.__df[self.s] == src]
-            c_pwd = gp_row.loc[(ix := gp_row.index[0]), self.p]
-            c_nxt_pwd = gp_row.loc[ix, self.np]
-            usr = gp_row.loc[ix, self.u]
-            pwd = Crypts.dcyt_str(self.__key, c_pwd)
-            nxt_pwd = Crypts.dcyt_str(self.__key, c_nxt_pwd)
-            return usr, pwd, nxt_pwd
-        else:
-            raise ServiceNotFoundError(val=src)
+    def get_pwd(self, src: str) -> str:
+        row = self.__get_naked_row(src)
+        return row.loc[(row.index[0]), [self.p, self.np]]
         
     ## '3': ('Get Table', self.get_tbl)
     @__shw_only
@@ -152,15 +144,12 @@ class PmTable():
         return self.__df
 
     ## '4': ('Get User', self.get_usr)
-    def get_usr(self, src: str) -> str or None:
-        if self.chk_src(src):
-            gu_row = self.__df.loc[self.__df[self.s] == src]
-            return gu_row.loc[gu_row.index[0], self.u]
-        else:
-            raise ServiceNotFoundError(val=src)
+    def get_usr(self, src: str) -> str:
+        row = self.__get_naked_row(src)
+        return row.loc[(row.index[0]), self.u]
 
     ## '5': ('Change Password', self.chg_pwd),
-    def chg_pwd(self, src: str, new_pwd: str) -> None:
+    def chg_pwd(self, src: str, new_pwd: str) -> None or ServiceNotFoundError:
         '''Change Password in a src-row or return ServiceNotFoundError if src do not exist'''
         if self.chk_src(src):
             cp_row = self.__df.loc[self.__df[self.s] == src]
@@ -172,7 +161,7 @@ class PmTable():
             raise ServiceNotFoundError(val=src)
 
     ## '6': ('Change URL', self.chg_url),
-    def chg_url(self, src: str, new_url: str) -> None:
+    def chg_url(self, src: str, new_url: str) -> None or ServiceNotFoundError:
         '''Change url in a src-row or return ServiceNotFoundError if src do not exist'''
         if self.chk_src(src):
             cu_row = self.__df.loc[self.__df[self.s] == src]
@@ -206,12 +195,7 @@ class PmTable():
     @__shw_only
     def src_srch(self, part_src: str) -> pd.DataFrame:
         '''Search for services that contain the text ignoring case'''
-        if part_src.isupper():
-            ps2 = part_src.casefold()
-        else:
-            ps2 = part_src.upper()
-        return self.__df.loc[self.__df[self.s].str.contains(part_src) |
-                             self.__df[self.s].str.contains(ps2)]\
+        return self.__df.loc[self.__df[self.s].str.contains(part_src, case=False)]\
                                 .sort_values(by=self.s, key=lambda x: x.str.casefold())
 
     ##'A': ('Delete Service', self.del_src)
@@ -239,14 +223,28 @@ class PmTable():
     ## 'D': ('Full Monti', self.f_monti)
     def f_monti(self) -> pd.DataFrame:
         return self.__df
+    
+    ## 'E': ('Get URL', self.get_url)
+    def get_url(self, src: str) -> str:
+        row = self.__get_naked_row(src)
+        return row.loc[(row.index[0]), self.r]
 
     def get_cols(self) -> list:
         return self.cols
     
     def get_empty_df(self) -> pd.DataFrame:
         return pd.DataFrame(columns=self.cols)
+        
+    def __get_naked_row(self, src: str) -> pd.DataFrame or ServiceNotFoundError:
+        if self.chk_src(src):
+            row = self.__df.loc[self.__df[self.s] == src]
+            row.loc[ix, self.p] = Crypts.dcyt_str(self.__key, row.loc[(ix := row.index[0]), self.p])
+            if row.loc[ix, self.np]:
+                row.loc[ix, self.np] = Crypts.dcyt_str(self.__key, row.loc[ix, self.np])
+            return row
+        else:
+            raise ServiceNotFoundError(val=src)
     
-
     
 class Crypts():
     ''' Goup of functions that deal with encryption'''

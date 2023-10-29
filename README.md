@@ -28,21 +28,20 @@ different services on the Web or intranet.
             'B': ('Table by Service', self.tbl_b_src), 'C': ('Tbl Ignoring Case', self.tbl_icase),
             'D': ('Full Monti', self.f_monti)
             }
-
 		self.__df
 
 ## Fundamentals - Pandas
 All data is stored in a Pandas Dataframe consisting of eigth columns and, for each service that is loaded, one new row. The columns and 
 their order are:    
-1. Service: Service name. Must be unique. (str)
-2. Username:
-3. Password:
+1. Service: name of the service. (Must be unique, not posible to load two of the same name) (str)
+2. Username: username to login to the service (str)
+3. Password: password to login to the service (encrypted)
 4. URL: (could be app launcher)
-5. dt_pwd: Datetime password was load or chenged.
-6. Notes:
-7. next_pwd: Potential password to change nex password change in the service.
-8. dt_next_pwd: Datatime next_pwd was loaded or chenged (setted).
-The dataframe is saved in an encrypted file.    
+5. dt_pwd: Datetime password was load or changed.
+6. Notes: general notes, comments, etc.
+7. next_pwd: potential password to change nex password change in the service.
+8. dt_next_pwd: Datatime next_pwd was loaded or chenged (setted).    
+The dataframe is saved in an encrypted file (default name: cipe.csd)    
 pmcore.py takes care of all the tasks of encryption, decryption, and administration of the dataframe. The UI components do not 
 require the use of either encryption nor decryption nor Pandas at all.
 
