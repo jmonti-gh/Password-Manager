@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 import pmcore as pmc
 
 ## Universal vars:
-src = 'realpython jp'
+src = 'reddit'
 
 ## Functions:
 def input_scrt(txt):
@@ -49,12 +49,20 @@ url = pmt.get_url(src)
 opts = webdriver.ChromeOptions()                # Use chrome
 opts.add_experimental_option("detach", True)
 drv = webdriver.Chrome(options=opts)
+drv.implicitly_wait(30)
 drv.get(url)
 drv.maximize_window()
 
-## Sign-In
-drv.find_element(By.XPATH, value='//a[@href="/account/login/?next=%2F"]').click()
-drv.find_element(By.ID, "id_login").send_keys(usr)
-drv.find_element(By.ID, "id_password").send_keys(pwd)
-drv.find_element(By.NAME, "jsSubmitButton").click()
+## Log-In
+drv.find_element(By.XPATH, value='//span[text()="Log In"]').click()
+drv.find_element(By.ID, "login-username").send_keys(usr)
+drv.find_element(By.ID, "login-password").send_keys(pwd)
+
+
+# drv.find_element(By.XPATH, value='//text()="Log In"]').click()
+
+# drv.find_element(By.XPATH, value='//a[@href="/account/login/?next=%2F"]').click()
+# drv.find_element(By.ID, "id_login").send_keys(usr)
+# drv.find_element(By.ID, "id_password").send_keys(pwd)
+# drv.find_element(By.NAME, "jsSubmitButton").click()
 
