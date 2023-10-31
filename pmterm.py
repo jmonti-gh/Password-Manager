@@ -3,7 +3,7 @@
 # pmterm.py
 
 '''
-tex-terminal front-end for Password Manager Program
+tex-terminal front-end for Password Manager Program.
 '''
 
 #####################################################

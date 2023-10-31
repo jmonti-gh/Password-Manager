@@ -1,9 +1,9 @@
-# ../pyw.exe 
+#!/usr/bin/env python
 
-# scripts_launcher.py
+# launcher.py
 
 '''
-Multi-login and Websites (plus Apps) automation.
+Multi-login and Websites (plus Apps) automation
 '''
 
 #######################################################
@@ -19,9 +19,17 @@ from tkinter import messagebox as msb
 import os
 from ctypes import windll
 
+# Other Libs
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+# Own module
+import pmcore as pmc
+
 
 ### Universal Vars'
 tip = '''Just Press'''
+
 
 ### To resolve blurred tkinter text in some windows version
 try:
@@ -35,7 +43,7 @@ class ScrptLnch(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(prg_tittle)
-        self.path = 'C:/Users/jm/git_repos/Password-Manager_w-Pandas/'
+        self.path = 'C:\\Users\\jm\\git_repos\\Password-Manager_w-Pandas\\'
         self.pph_widgets()
 
     def pph_widgets(self):
@@ -59,9 +67,12 @@ class ScrptLnch(tk.Tk):
             self.__pph = self.pph_entry.get()
             pph2 = self.pph2_entry.get()
             assert self.__pph == pph2
+            self.pmt = pmc.PmTable(self.__pph)
         except Exception as e:
             self.__ext_prg(f'Critical Error getting Table: {e}')
         else:
+            # get columns names as independent vars
+            self.s, self.u, self.p, self.r, self.d, self.n, self.np, self.nd = self.pmt.get_cols()
             self.pph2_entry.delete(0, tk.END)   
             self.pph_btn.destroy()              # Delete pph_btn 'OK' button
             self.pph_entry.delete(0, tk.END)    # Clean passphrase field
@@ -77,33 +88,30 @@ class ScrptLnch(tk.Tk):
         
         self.__mk_btn('realpython jp', self.realpython_jp, 1, 0)
         self.__mk_btn('reddit', self.reddit, 1, 1)  
-        self.__mk_btn('Password Manager GUI', self.pmgui, 1, 2)
-        self.__mk_btn('Password Manager TUI', self.pmtui, 2, 2)  
+        self.__mk_btn('Password Manager', self.pwd_mgr, 1, 2)  
     
     def __mk_btn(self, txt, cmd, r, c):
-        px, py, w = 10, 5, 20
-        self.btn = ttk.Button(self, text=txt, command=cmd, width=w)
+        px, py, w = 10, 5, 30
+        self.btn = ttk.Button(self, text=txt, command=cmd, width=18)
         self.btn.grid(row=r, column=c, sticky=tk.E, padx=px, pady=py)
 
-    def pmgui(self):
-        exe_str = f'pyw.exe {self.path}pmtk.pyw'
-        self.__exec_cmd(exe_str)
-
-    def pmtui(self):
-        exe_str = f'python.exe {self.path}pmterm.py "{self.__pph}" '
-        self.__exec_cmd(exe_str)
-
     def realpython_jp(self):
-        self.__src_cnx('realpython jp')
+        # exe_str = f'pyw.exe {self.path}pmtk.pyw "{self.__pph}" '
+        exe_str = f'pyw.exe {self.path}reddit_login.py "{self.__pph}" '
+        self.__exec_str(exe_str)
+        # os.system(exe_str)
 
     def reddit(self):
-        self.__src_cnx('reddit')
+        exe_str = f'python.exe {self.path}reddit_login.py "{self.__pph}" '
+        self.__exec_str(exe_str)
+        # os.system(exe_str)
 
-    def __src_cnx(self, src):
-        exe_str = f'python.exe {self.path}website_login.py "{src}" "{self.__pph}" '
-        self.__exec_cmd(exe_str)
+    def pwd_mgr(self):
+        exe_str = f'pyw.exe {self.path}pmtk.pyw "{self.__pph}" '
+        self.__exec_str(exe_str)
+        # os.system(exe_str)
 
-    def __exec_cmd(self, cmd):
+    def __exec_str(self, cmd):
         os.system(cmd)
 
     def __ext_prg(self, msg):

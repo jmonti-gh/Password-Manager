@@ -15,10 +15,9 @@ automate these logins.
 - pmtk: Win Shortcut(.lnk) for pmtk.py execution.
 - pmtk.pyw: Tkinter Password Manager GUI.
 - README.md: this file.
-- realpython_signin: Win Shortcut(.lnk) for realpython_signin.py execution.
-- realpython_signin.py: selenium 4 realpython signin automation.
-- reddit_login: Win Shortcut(.lnk) for reddit_login.py execution.
-- reddit_login.py: selenium 4 reddit login automation.
+- rcripts_launcher: Win Shortcut(.lnk) for scripts_launcher.pyw execution.
+- scripts_launcher.pyw: Basic GUI to launch python scripts (and others executables...).
+- website_login.py: selenium 4 websites login automation.
 
 ## Password Manager Components
 ### Code
@@ -78,4 +77,14 @@ require the use of either encryption nor decryption nor Pandas at all.
 	- some_row: reedit.com, jperez_pwdmgr, The_2nd_Pwd, https://www.reddit.com/, dlthub.com
 	- some_row: etc... (order don't care)
 
+## Requeriments (It was only probe in Win10)
+- Install python (python.org) - used in python 3.11
+- pip install pandas, tabulate, selenium, pyautogui, pandastable
 
+## Concept review
+### python
+#### Walrus operator
+### Pandas
+#### Different ways to concat (append) data to a DF
+#### Sorting a DF
+### Tkinter
