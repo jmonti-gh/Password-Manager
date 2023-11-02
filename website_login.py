@@ -3,7 +3,7 @@
 # website_login_jm.py
 
 '''
-Open and Sign-In to Websites loaded in crypted PmTable
+Open and Sign-In to Websites loaded in crypted PmTable.
 '''
 
 # Built-in Libs
@@ -83,11 +83,11 @@ p_IP_port = pmt.get_url(prxy)
 opts = webdriver.ChromeOptions()                    # Use chrome
 opts.add_experimental_option("detach", True)
 drv = webdriver.Chrome(options=opts)
-Thread(target=open_a_page, args=(drv, url)).start()
-Thread(target=enter_proxy_auth, args=(p_usr, p_pwd)).start()
 drv.implicitly_wait(7)
 drv.maximize_window()
 
+Thread(target=open_a_page, args=(drv, url)).start()
+Thread(target=enter_proxy_auth, args=(p_usr, p_pwd)).start()
 
 ## Sign-in upon service
 if src == '!donotexist':

@@ -11,9 +11,9 @@ automate these logins.
 ## Files in this Repo (alphabetical order)
 - cipe.csd and nert, commented above
 - pmcore.py: Central python module in charge of carrying out all backend tasks.
-- pmterm.py: Password Manager Text-based user interface (TUI).
-- pmtk: Win Shortcut(.lnk) for pmtk.py execution.
-- pmtk.pyw: Tkinter Password Manager GUI.
+- pmgui: Win Shortcut(.lnk) for pmgui.pyw execution.
+- pmgui.pyw: Tkinter Password Manager GUI.
+- pmtui.py: Password Manager Text-based user interface (TUI).
 - README.md: this file.
 - scripts_launcher: Win Shortcut(.lnk) for scripts_launcher.pyw execution.
 - scripts_launcher.pyw: Basic GUI to launch python scripts (and others executables...).
