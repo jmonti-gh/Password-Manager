@@ -8,7 +8,7 @@ GUI Password Manager
 
 
 #######################################################
-prg_tittle = ''' Password Manager -tkinter- v. 2.5''' 
+prg_tittle = ''' Password Manager -tkinter- v. 2.2''' 
 #######################################################
 # author: Jorge Monti
 
@@ -78,20 +78,20 @@ class PwdMgr(tk.Tk):
         self.bind("<Control-m>", lambda event: self.__ctrl_m())     # Secret keystroke
 
     def pph_widgets(self):
-        r, c, px, py, w = 0, 0, 10, 5, 24
+        r, c, px, py = 0, 0, 10, 5
 
         label = ttk.Label(text='Passphrase:')
         label.grid(row=r, column=c, sticky=tk.W, padx=px, pady=py)
-        self.pph_entry = tk.Entry(width=w, show='*')
+        self.pph_entry = tk.Entry(width=30, show='*')
         self.pph_entry.grid(row=r, column=c+1, sticky=tk.W, padx=px, pady=py)
 
         self.label2 = ttk.Label(text='Passphrase:')
         self.label2.grid(row=r+1, column=c, sticky=tk.W, padx=px, pady=py)
-        self.pph2_entry = tk.Entry(width=w, show='*')
+        self.pph2_entry = tk.Entry(width=30, show='*')
         self.pph2_entry.grid(row=r+1, column=c+1, sticky=tk.W, padx=px, pady=py)
 
         self.pph_btn = ttk.Button(self, text='OK', command=self.read_csd)
-        self.pph_btn.grid(row=r+2, column=c+1, sticky=tk.S, padx=px, pady=py)
+        self.pph_btn.grid(row=r+2, column=c+1, sticky=tk.S, padx=5, pady=5)
 
     def read_csd(self):
         try:
@@ -145,7 +145,7 @@ class PwdMgr(tk.Tk):
         self.__mk_btn('Help', cmds[14], 8, 3)
 
     def __mk_item(self, txt, rw):
-        c, px, py, w, shw = 0, 10, 5, 24, None
+        c, px, py, w, shw = 0, 10, 5, 30, None
         if txt == self.nl or txt == self.rl:
             w = 120
         label = ttk.Label(text=txt)
@@ -157,8 +157,8 @@ class PwdMgr(tk.Tk):
         return entry
     
     def __mk_btn(self, txt, cmd, r, c):
-        px, py, w = 10, 5, 24
-        self.btn = ttk.Button(self, text=txt, command=cmd, width=w)
+        px, py, w = 10, 5, 30
+        self.btn = ttk.Button(self, text=txt, command=cmd, width=18)
         self.btn.grid(row=r, column=c, sticky=tk.E, padx=px, pady=py)        
 
     def add_pwd(self):              # '1': ('Add Password', self.add_pwd)

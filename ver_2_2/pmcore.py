@@ -7,7 +7,7 @@ In turn, passwords are saved with their own encryption.
 I see practical import it under the pmc alias, ex.: import pmcore as pmc'''
 
 __author__ = 'Jorge Monti'
-__version__ = 2.5
+__version__ = 2.2
 
 
 # Built-in Libraries
@@ -267,7 +267,7 @@ if __name__ == '__main__':
     # import os
     # os.system('python pmterm.py')
 
-    o = PmTable("1978, 1986, and 2022 FIFA Champ!")
+    o = PmTable("¡Argentina Campeón del Mundo 2022! - Tres campeonatos mundiales: 1978(Kempes), 1986('El Diego'), 2022(Messi).")
     #print(o.__dict__)
 
 

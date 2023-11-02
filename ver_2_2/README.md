@@ -1,4 +1,4 @@
-# Password Manager with Pandas (ver. 2.5)
+# Password Manager with Pandas (ver. 2.2)
 To manage and store access credentials for countless services.
 
 ## Purpose
@@ -15,7 +15,7 @@ automate these logins.
 - pmtk: Win Shortcut(.lnk) for pmtk.py execution.
 - pmtk.pyw: Tkinter Password Manager GUI.
 - README.md: this file.
-- scripts_launcher: Win Shortcut(.lnk) for scripts_launcher.pyw execution.
+- rcripts_launcher: Win Shortcut(.lnk) for scripts_launcher.pyw execution.
 - scripts_launcher.pyw: Basic GUI to launch python scripts (and others executables...).
 - website_login.py: selenium 4 websites login automation.
 
@@ -52,6 +52,7 @@ Own Exceptions definition.
 ### class Crypts():
     ''' Goup of functions that deal with encryption'''
 
+
 ## Fundamentals - Pandas
 All data is stored in a Pandas Dataframe consisting of eigth columns and, for each service that is loaded, one new row. The columns and 
 their order are:    
@@ -74,7 +75,7 @@ require the use of either encryption nor decryption nor Pandas at all.
 	- row_0: first row, initial file data		# row_0 is created at the same moment of table and crypto_key creation.
 	- some_row: realpython.com, jperez.pwdmgr@gmail.com, At_least_8_chars, https://realpython.com/
 	- some_row: reedit.com, jperez_pwdmgr, The_2nd_Pwd, https://www.reddit.com/, dlthub.com
-	- some_row: etc... (the order don't care)
+	- some_row: etc... (order don't care)
 
 ## Requeriments (It was only probe in Win10)
 - Install python (python.org) - used in python 3.11

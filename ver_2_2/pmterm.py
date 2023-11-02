@@ -7,7 +7,7 @@ tex-terminal front-end for Password Manager Program.
 '''
 
 #####################################################
-prg_tittle = ''' Password Manager -terminal- v 2.5'''
+prg_tittle = ''' Password Manager -terminal- v 2.2'''
 #####################################################
 # author: Jorge Monti
 
