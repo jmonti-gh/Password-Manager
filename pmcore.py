@@ -19,8 +19,8 @@ import cryptpandas as crp
 from cryptography.fernet import Fernet
 
 
-cipe = 'cipe.csd'       # Crypted Dataframe filename
-kife = 'nert'           # key filename
+# cipe = 'cipe.csd'       # Crypted Dataframe filename
+# kife = 'nert'           # key filename
 
 
 class ServiceNotFoundError(ValueError):
@@ -40,7 +40,7 @@ class CsdColumnsNotMatch(TypeError):
 class PmTable():
     ''' Core class: It hosts a dataframe that is written as an encrypted file
     each time it is modified'''
-    def __init__(self, pph, cfn=cipe, kfn=kife):
+    def __init__(self, pph, cfn='cipe.csd', kfn='nert'):
         self.kfn = kfn
         self.__pph = pph        
         self.cfn = cfn
@@ -258,7 +258,7 @@ class PmTable():
     
     
 class Crypts():
-    ''' Goup of functions that deal with encryption'''
+    ''' Group of functions that deal with encryption'''
     @staticmethod
     def gen_key():
         return Fernet.generate_key()

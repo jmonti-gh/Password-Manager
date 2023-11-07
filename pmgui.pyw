@@ -23,7 +23,7 @@ from ctypes import windll
 from pandastable import Table
 
 # Own module
-import pmcore_3_0 as pmc
+import pmcore as pmc
 
 
 ### Universal Vars'
@@ -41,7 +41,7 @@ help = '''
 | Updates Notes |  > Fill Service name and Notes fields to change the URL.\n
 | Ser Next Pwd |  > Fill Service name and both next_pwd fields to change the password.\n
 | Service Search |  > Enter part of the Service name (ignores case).\n
-| Delete Service |  > Enter Service name - It's NOT possible to Undelete.\n
+| Delete Service |  > Enter Service name - It's NOT possible to undelete.\n
 | Table by Service |  > Get the table of services sorted alphabetically.\n
 | Tbl Ignoring Case |  > Get the table of services sorted alphabetically ignoring case.\n
 | Full Monti |  > Show all columns and rows of the Service Table. Need Passphrase. (Entire Table).\n

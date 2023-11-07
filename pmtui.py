@@ -17,11 +17,8 @@ import getpass as gp
 import logging
 import sys
 
-# Third-party Lib
-from tabulate import tabulate  
-
 # Own module
-import pmcore_3_0 as pmc
+import pmcore as pmc
 
 
 ### Program Variables
@@ -108,7 +105,6 @@ while True:
             log.error(e)
 
     elif option == '3':                 # '3': ('Get Table', self.gettbl)
-        #print(tabulate(pmt.gettbl(), headers='keys', tablefmt='psql'))
         print(pmt.gettbl())
 
     elif option == '4':                 # '4': ('Get User', self.get_usr)
@@ -137,7 +133,7 @@ while True:
 
     elif option == '9':                 #  '9': ('Service Search', self.src_srch)
         part_s = input(f'Input the name of the service or part of the name: ')
-        print(tabulate(pmt.srcsrch(part_s), headers='keys', tablefmt='psql'))
+        print(pmt.srcsrch(part_s))
 
     elif option == 'A':                 # 'A': ('Delete Service', self.del_src)
         src = input_val(s)
@@ -148,11 +144,9 @@ while True:
             log.warning(f'Error: {s} "{src}" do not exists!')
 
     elif option == 'B':                 # 'B': ('Table by Service', self.tbl_b_src)
-        # print(tabulate(pmt.tblsrc(), headers='keys', tablefmt='psql'))
         print(pmt.tblsrc())
 
     elif option == 'C':                 # 'C': ('Tbl Ignoring Case', self.tbl_icase)
-        # print(tabulate(pmt.tblicase(), headers='keys', tablefmt='psql'))
         print(pmt.tblicase())   
 
     elif option == 'D':                # 'D': ('Full Monti', self.f_monti)
@@ -172,7 +166,6 @@ while True:
 
     elif option == 'SECRET':             # Show HIDES in all row
         src = input_val(s)
-        # print(tabulate(pmt._PmTable__get_naked_row(src), headers='keys'))
         print(pmt._PmTable__get_naked_row(src))
 
     elif option == '0':
