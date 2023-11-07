@@ -1,5 +1,8 @@
-# Password Manager with Pandas (ver. 2.5)
+# Password Manager with Pandas (ver. 3.0)
 To manage and store access credentials for countless services.
+- Also in this repo you will find examples of connections to DB, logins to websites and ssh servers ((and a script launcher
+ from where you can execute all those connections).
+- All of this examples use pmcore module, the 'heart' of this project.
 
 ## Purpose
 This project was born from the need to have a secure repository from which to read user and password data to automate login to
