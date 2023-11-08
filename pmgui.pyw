@@ -139,7 +139,7 @@ class PwdMgr(tk.Tk):
         self.nxt_pw2_entry = self.__mk_item(self.npl, 10)
 
         # Mk and show buttons w/their commands
-        cmds = (self.add_pwd, self.get_pwd, self.get_tbl, self.get_usr, self.chg_pwd,
+        cmds = (self.add_src, self.get_pwd, self.get_tbl, self.get_usr, self.chg_pwd,
                 self.chg_url, self.updt_nts, self.set_nxt_pwd, self.src_srch, self.del_src,
                 self.table_by_src, self.tbl_icase, self.f_monti, self.clr_data, self.hlp)
         i = 0
@@ -169,7 +169,7 @@ class PwdMgr(tk.Tk):
         self.btn = ttk.Button(self, text=txt, command=cmd, width=18)
         self.btn.grid(row=r, column=c, sticky=tk.E, padx=px, pady=py)        
 
-    def add_pwd(self):              # '1': ('Add Password', self.addpwd)
+    def add_src(self):              # '1': ('Add Password', self.addsrc)
         src = self.src_entry.get()
         usr = self.usr_entry.get()
         pwd = self.pwd_entry.get()
@@ -185,8 +185,8 @@ class PwdMgr(tk.Tk):
                 assert pwd == pw2
                 if nxt_pwd != nxt_pw2:
                     raise UserWarning
-                self.pmt.addpwd(src, usr, pwd, url, dom, nts, nxt_pwd)
-                msb.showinfo("Success", "Password Successfully Added!")
+                self.pmt.addsrc(src, usr, pwd, url, dom, nts, nxt_pwd)
+                msb.showinfo("Success", f"{self.s} Successfully Added!")
                 self.get_tbl()
             except AssertionError as e:
                 msb.showwarning('Error', f"Passwords don't match {e}")

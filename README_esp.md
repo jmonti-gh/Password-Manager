@@ -1,8 +1,8 @@
 # Administrador y Almacen de contraseñas con Pandas (ver. 3.0)
 Administra y almacena de forma encriptada contraseñas y datos de conexión para una ilimitada cantidad de servicios.
-- Asimismo en este repo encontrarpa exemplos de conexión a Bases de Datos, logins a sitios web y a servidores ssh (y un 'lanzador de scripts', 
-desde donde podrá ejecutar todas esas cnexiones)
-- Todos estos exemplos utilizan el módulo 'pmcore', el corazón the este proyecto, que es el que permite acceder a las credenciales almacenadas.
+- Asimismo en este repo encontrará exemplos de conexión a Bases de Datos, logins a sitios web y a servidores ssh (y un 'lanzador de scripts', 
+desde donde podrá ejecutar todas esas conexiones)
+- Todos estos exemplos utilizan el módulo 'pmcore', el corazón de este proyecto, que es el que permite acceder a las credenciales almacenadas.
 
 ## Proposito
 Este proyecto nace de la necesidad de contar con un almacen seguro de credenciales del cual leer datos de usuario y contraseña principalmente 
@@ -22,13 +22,13 @@ Los ejemplos de conexión a este tipo de servicios que encuentra en este repo ut
 - website_login.py: selenium 4 websites login automation.
 
 ## pmcore.py
-Como ya hemos señalado anteriormente este es el múdulo central de esta solución de almacenamiento y gestión de credenciales encriptadas.
+Como ya hemos señalado anteriormente este es el módulo central de esta solución de almacenamiento y gestión de credenciales encriptadas.
 Se encarga de llevar a cabo todas las tareas de bakend como encripción, gestión de los datos de la tabla, lectura y escritura de la tabla encriptada.
 Todas las demás aplicaciones de este proyecto hacen uso de este módulo para leer las credenciales necesarias según el servicio o, en el caso particular
 de las interfaces de usuario para la administración (pmtui.py y pmgui.pyw), manejar las altas, bajas y modificaciones de los datos de la tabla.
 Asimismo contando con este módulo un programador de python o de cualquier lenguaje que pueda llamar módulos python puede escribir sus propias rutinas 
-de administración o conexión con el servicio que necesite, sin necesidad de tener conocimientos de dataframes, pandas, escritura o lectura de archivos,
-o mecanismos de encripción o desencripción, ya que de todo eso se encarga este módulo.
+de administración de contraseñas o conexión con el servicio que necesite, sin necesidad de tener conocimientos de dataframes, pandas, escritura o 
+lectura de archivos, o mecanismos de encripción o desencripción, ya que de todo eso se encarga este módulo.
 - Queda por experimentar la posibilidad de crear un ejecutable de este módulo (.exe en Win) y que sea llamdo desde un script en php por ej.
 
 ## Componentes
@@ -41,12 +41,13 @@ o mecanismos de encripción o desencripción, ya que de todo eso se encarga este
 - Delete them and they will be created from scratch with a new passphrase when the PmTable() class is intantiated.
 - cipe.csd and nert are files default names. Renames can be done using the cfn=, and kfn= parameters of the PmTable() class.
 #### Formato de la tabla de datos
-All data is stored in a Pandas Dataframe consisting of eigth columns and, for each service that is loaded, one new row. The columns and 
-their order are:    
-1. Service: name of the service. (Must be unique, not posible to load two of the same name) (str)
-2. Username: username to login to the service (str)
-3. Password: password to login to the service (encrypted)
-4. URL_IPport: Web url or IP:port data necessary to locate the service (ex. https://www.reedit.com/, or 192.168.3.3:22)
+All data is stored in a Pandas Dataframe (a Table) consisting of eigth columns and, for each service that is loaded, one 
+new row. The columns and their order are:    
+1. Service: Nombre que el usuario le da al servicio. Debe ser único, ya que si se carga un servicio con el mismo nombre de uno existente
+		pmcore genera un backup del existente adicionando al nombre mes y día último cambio de clave del servicio anterior. (str)
+2. Username: Nombre de usuario para conectarse al servicio. (str)
+3. Password: Contraseña necesaria para logearse en el servicio. (encrypted)
+4. URL_IPport: Internet URL o IP:port data necessary to locate the service (ex. https://www.reedit.com/, or 192.168.3.3:22)
 5. Domain: Third field that define domain to connect (MS-AD Domain, or Cloud Tenant, or DB Instance, etc.)
 5. dt_pwd: Datetime password was load or changed.
 6. Notes: general notes, comments, etc.
@@ -81,12 +82,19 @@ Own Exceptions definition.
 ### class Crypts():
     ''' Goup of functions that deal with encryption'''
 	
-## Pricipio de funcionamiento de pmcore - Pandas
+## Principio de funcionamiento de pmcore - Pandas
 Cuando la clase PmTable de pmcore es instanciada lee, si es que existen, o crea de cero, si es que no existen ,los archivos que 
 por defualt hemos llamado cipe.csd y nert. Esto lo hará en el camino (path) que sea indicado por la aplicación que llama a la clase.
 Los archivos cipe.csd y nert pueden almacenarse en distintos subdirectorios (diferentes paths para c/uno), por supuesto con diferentes
 nombres a los propuestos por default. El único requisito es que la aplicación tenga acceso de escritura para cipe.csd y de lectura para
 nert (una vez que este último haya sido creado por primera vez).
+La creación por primera vez de cipe.csd crea el registro 0 (row_0), que tiene datos orientativos.
+### Encripción
+Dos encripciones entran en juego en esta solución. Una para el guardado del archivo de datos y otra para el guardado de las passwords
+El archivo de datos (la tabla/dataframe) se escribe en el disco de manera encriptada utilizando lo que denominamos passphrase y esta
+es completamente secreta, solo existe en la memoria del usuario. 
+Las cotraseñás o passwords (Password y next_pwd) se guardan en la tabla de manera encriptada utilizando la key de encripción que se 
+genera al correr por primera vez el administrador de claves o si existe ya escrita en el archivo 'nert'.
 
 
 

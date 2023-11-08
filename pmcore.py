@@ -69,10 +69,10 @@ class PmTable():
         if len([i for i, j in zip(self.cols, self.__df.columns) if i == j]) != len(self.cols):
             raise CsdColumnsNotMatch
         
-        # if kipe (key) don't exist create it (write it), else read-it
+        # if keyfile (key) don't exist create it (write it), else read-it
         if not self.chk_file(self.kfn):
-            self.__wrt_kipe()
-        self.__key = self.__read_key()      # get key from kife file
+            self.__wrt_keyfile()
+        self.__key = self.__read_key()      # get key from key file ('nert')
     
     def __shw_only(func):                   # to hide some columns in table views (decorator)
         def inner(self, *args):
@@ -97,7 +97,7 @@ class PmTable():
     def read_table(self) -> pd.DataFrame:
         return crp.read_encrypted(path=self.cfn, password=self.__pph)
     
-    def __wrt_kipe(self) -> None:
+    def __wrt_keyfile(self) -> None:
         '''Write Fernet.key to file'''
         k = Crypts.gen_key()
         with open(self.kfn, 'wb') as f:
